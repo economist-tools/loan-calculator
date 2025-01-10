@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>מחשבון החזר הלוואה</title>
+  <style>
+    body {
+      direction: rtl;
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #f3f3f3;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .calculator-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>מחשבון החזר הלוואה</h1>
+  <div class="calculator-container">
+    <label for="loanAmount">סכום ההלוואה (₪):</label>
+    <input type="number" id="loanAmount" placeholder="לדוגמה, 50,000" />
+
+    <label for="annualInterest">ריבית שנתית (%):</label>
+    <input type="number" step="0.01" id="annualInterest" placeholder="לדוגמה, 5" />
+
+    <label for="loanYears">משך ההלוואה (שנים):</label>
+    <input type="number" id="loanYears" placeholder="לדוגמה, 5" />
+
+    <button onclick="calculateLoan()">חשב תשלום חודשי</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function calculateLoan() {
+      // קריאת קלט מהמשתמש
+      const principal = parseFloat(document.getElementById("loanAmount").value);
+      const annualInterest = parseFloat(document.getElementById("annualInterest").value);
+      const years = parseFloat(document.getElementById("loanYears").value);
+
+      // בדיקה שהקלט תקין
+      if (isNaN(principal) || isNaN(annualInterest) || isNaN(years) ||
+          principal <= 0 || annualInterest < 0 || years <= 0) {
+        document.getElementById("result").innerText = "אנא הזן ערכים תקינים";
+        return;
+      }
+
+      // חישוב ריבית חודשית ומספר תשלומים
+      const monthlyInterest = annualInterest / 100 / 12;  // ריבית חודשית כערך עשרוני
+      const totalPayments = years * 12;                   // סה"כ תשלומים
+
+      // נוסחת תשלום חודשי (אנונה)
+      // תשלום = (r * P) / (1 - (1 + r)^(-n))
+      // r = monthlyInterest, P = principal, n = totalPayments
+      const monthlyPayment = (monthlyInterest * principal) / 
+                             (1 - Math.pow(1 + monthlyInterest, -totalPayments));
+
+      // עיגול התוצאה לשתי ספרות אחרי הנקודה (או כמה שתרצה)
+      const monthlyPaymentRounded = monthlyPayment.toFixed(2);
+
+      // הצגת התוצאה
+      document.getElementById("result").innerText =
+        `התשלום החודשי המשוער הוא: ₪${monthlyPaymentRounded}`;
+    }
+  </script>
+</body>
+</html>
